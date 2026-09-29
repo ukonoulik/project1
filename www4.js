@@ -29,36 +29,54 @@ http.createServer(async function(req, res){
 		res.write('\n\t<ul>');
 		
 		res.write('\n\t<h2>Minu valitud foto</h2>');
-		res.write('\n\t<img src="/avaleht.jpg" alt="Foto avalehel" width="400">');
+		res.write('\n\t<img src="/kass.jpg" alt="Foto avalehel" width="400">');
 		
 		res.write('\t<p>Hetkel on '+ dateTimeET.dayET() + '.<p>\n\t<p>Kuupäev on: ' + dateTimeET.dateET() + 
 		'</p>\n\t<p>Lehekülg avati kell: ' + dateTimeET.timeET() + '</p>');
 		res.write(pageFoot);
 		return res.end();
 	}
-	else if (currentURL.pathname === '/vanasona'){
-		res.writeHead(200, {"Content-type": "text/html"});
-		res.write(pageHead);
-		res.write(pageBanner);
-		res.write('\n\t<h1>Tänase päeva vanasõna</h1>\n\t<p>Siin näed tänaseks loositud Eesti vanasõna.</p>\n\t<hr>');
-		try {
-			const vanasonadPath = path.join(__dirname, 'data', 'vanasonad.txt');
-			const data = await fs.readFile(vanasonadPath, 'utf8');
-			const vanasonad = data.split(/\r?\n/).filter(rida => rida.trim() !== '');
-			const juhuslik = Math.floor(Math.random() * vanasonad.length);
-			const loositudVanasona = vanasonad[juhuslik];
-			
-			res.write('\n\t<p><strong>' + loositudVanasona + '</strong></p>');
-			
-		} catch (err) {
-			console.log(err);
-			res.write('\n\t<p>Vanasõnade faili lugemisel tekkis viga!</p>');
-		}
-		res.write('\n\t<p><a href="/">Avaleht</a></p>');
-		
-		res.write(pageFoot);
-		return res.end();
-	}
+	else if (currentURL.pathname === '/vanasona') {
+
+    res.writeHead(200, {
+        'Content-Type': 'text/html; charset=utf-8'
+    });
+
+    res.write(pageHead);
+    res.write(pageBanner);
+
+    res.write('\n\t<h1>Tänase päeva vanasõna</h1>');
+    res.write('\n\t<p>Siin näed tänaseks loositud Eesti vanasõna.</p>');
+    res.write('\n\t<hr>');
+
+    try {
+        const vanasonadPath = path.join(
+            __dirname,'txt','vanasonad.txt'
+        );
+
+        const data = await fs.readFile(vanasonadPath, 'utf8');
+        const vanasonad = data
+            .split(';')
+            .map(rida => rida.trim())
+            .filter(rida => rida.length > 0);
+        const juhuslik = Math.floor(
+            Math.random() * vanasonad.length
+        );
+
+        const loositudVanasona = vanasonad[juhuslik];
+
+        res.write('\n\t<p><strong>' + loositudVanasona + '</strong></p>');
+
+    } catch (err) {
+        console.log(err);
+        res.write('\n\t<p>Vanasõnade faili lugemisel tekkis viga!</p>');
+    }
+
+    res.write('\n\t<p><a href="/">Avaleht</a></p>');
+
+    res.write(pageFoot);
+    return res.end();
+}
 	
 	else if (currentURL.pathname === '/miks-tlu') {
 
